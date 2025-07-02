@@ -39,7 +39,7 @@ Router.post('/iniciosesion', async (req, res) =>{
         }
         if(! await bcrypt.compare(req.body.password,cli.password)
         ){
-        return res.status(401).send({mensaje: "Contraseña incorrecta"});
+        return res.status(401).send({mensaje: "Usuario o contraseña incorrectos"});
         }
         let aviso = {
             msj:"Bienvenido al sistema ",

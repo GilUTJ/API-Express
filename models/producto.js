@@ -20,7 +20,7 @@ const productoSchema = new mongoose.Schema({
 // Método para establecer la URL de la imagen
 productoSchema.methods.setimgurl = function setimgurl(imagen){
     this.imgurl = "http://localhost:3000/foto/" + imagen;
-}
+};
 
 // Definicion del esquema de producto
 mongoose.model("Producto", productoSchema);

@@ -5,20 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors'); // Importando cors para usar las peticiones cruzadas desde el Frontend
 const mongoose = require('mongoose'); // Importando mongoose para la conexión a la base de datos
-mongoose.connect('mongodb://127.0.0.1:27017/ejemplo6d');
+mongoose.connect('mongodb://127.0.0.1:27017/ejemplo6d_Gil');
 //depues de la declaracion de variables se coloca la conexion a la base de datos
 //const mongoose = require('mongoose');
 //Listado de archivos de modelos
 require('./models/producto'); // Importando el modelo de producto para que se registre en mongoose
 require('./models/empleado'); // Importando el modelo de empleado para que se registre en mongoose
 require('./models/cliente'); // Importando el modelo de cliente para que se registre en mongoose
-
-
-
-
-
-
-
 
 //listado de rutas
 //prodcuto

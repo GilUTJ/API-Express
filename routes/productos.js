@@ -11,6 +11,8 @@ const upload = require('../libs/almacen');
 const fs = require('fs-extra');
 //manejo de rutas de archivo 
 const path = require('path');
+//middleware de autentificacion JWT
+const autentica = require('../middleware/autentificajwt');
 
 
 
@@ -29,8 +31,8 @@ const {body, validationResult} = require('express-validator');
 
 // trabajan con url , funcion anonima y parametros que son req y res que son request y response
 
-//cuando se cominica 
-router.get('/', async function(req, res){
+//metodo get para consultar todos los productos
+router.get('/', autentica, async function(req, res){
    /*  pro = [
         {codigo: 1, nombre: 'Fenix', descripcion: 'Ave de fuego', precio: 1000, existencia: 10},
         {codigo: 2, nombre: 'Unicornio', descripcion: 'Animal mitologico', precio: 2000, existencia: 5},
@@ -46,7 +48,7 @@ router.get('/', async function(req, res){
 //consultar un solo documento  
 
 //indica la ruta unica por que no se puede usar la misma ruta para varios metodos
-router.get('/nombre/:nombre', async (req, res) => {
+router.get('/nombre/:nombre', autentica, async (req, res) => {
 
     //Se crea la variable a ytrave s de la dconsulta del parametro nombre 
     let producto = await Producto.findOne({nombre:req.params.nombre})
@@ -59,7 +61,7 @@ router.get('/nombre/:nombre', async (req, res) => {
     res.send({producto});
 });
 
-router.post('/', 
+router.post('/', autentica, 
     [   //validaciones de los datos de entrada
         /* body("codigo").isInt().withMessage("El codigo debe ser un numero entero"),
         body("nombre").isLength({min: 3}).withMessage("El nombre debe tener al menos 3 caracteres"), */
@@ -104,7 +106,7 @@ router.post('/',
 
     });
 //Metodo para modificar 
-router.put('/', async (req, res)=>{
+router.put('/', autentica, async (req, res)=>{
     let pro = await Producto.findOne({nombre:req.body.nombre});
 
     if(!pro){
@@ -132,7 +134,7 @@ router.put('/', async (req, res)=>{
     res.send({pro_modificado});
 });
 
-router.delete('/borrar/nombre:', async(req, res)=>{
+router.delete('/borrar/:nombre', autentica, async(req, res)=>{
     let pro =  await Producto.findOne({nombre:req.params.nombre});
 
     if(!pro){
@@ -154,7 +156,7 @@ por lo menos debmos tener url y funcion anonima sin parametros
 
 module.exports = router;
 //metodo para actualizar donde primero se busca poir nombre 
-router.put('/',upload.single('imagen'), async(req,res)=>{
+router.put('/imagen',upload.single('imagen'), async(req,res)=>{
     let prod = await Producto.findOne({nombre:req.body.nombre});
 
     if(!prod){
@@ -170,14 +172,14 @@ router.put('/',upload.single('imagen'), async(req,res)=>{
         prod.setimgurl(filename);
     }
     //se busca el producto por nombre y actualiza 
-    let pro_modificado = await Producto.findByIdAndUpdate(
+    let pro_modificado = await Producto.findOneAndUpdate(
         {nombre:req.body.nombre},
         {imgurl:prod.imgurl},
         {new:true},
     );
 
     if(req.file){//path busca y elimina 
-        await fs.unlink(path.resolve("almacen/img"+urlfotoanterior[4]));
+        await fs.unlink(path.resolve("almacen/img/"+urlfotoanterior[4]));
 
         res.send({pro_modificado});
     }
